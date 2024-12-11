@@ -1,3 +1,5 @@
 FROM almalinux
-RUN dnf install telnet
-CMD [ "sleep","100" ]
+RUN dnf update -y && \
+    dnf install -y telnet && \
+    dnf clean all
+CMD ["sleep", "100"]
