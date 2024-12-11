@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    project: expense
+    env: dev
+    tier: frontend
+spec:
+  # modify replicas according to your case
+  replicas: 2
+  selector:
+    matchLabels:
+      project: expense
+      env: dev
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        project: expense
+        env: dev
+        tier: frontend
+    spec:
+      containers:
+      - name: frontend
+        image: sunil0428/my_frontend:v1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-svc
+spec:
+  type: LoadBalancer
+  selector:
+    project: expense
+    env: dev
+    tier: frontend
+  ports:
+  - name: frontend
+    protocol: TCP
+    port: 80
+    targetPort: 80
