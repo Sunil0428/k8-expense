@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: backend
+data: 
+  DB_HOST: mysql
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    project: expense
+    env: dev
+    tier: backend
+spec:
+  # modify replicas according to your case
+  replicas: 2
+  selector:
+    matchLabels:
+      project: expense
+      env: dev
+      tier: backend
+  template:
+    metadata:
+      labels:
+        project: expense
+        env: dev
+        tier: backend
+    spec:
+      containers:
+      - name: backend
+        image: sunil0428/my_backend:v1
+        envFrom:
+        - configMapRef:
+            name: backend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-svc
+spec:
+  selector:
+    project: expense
+    env: dev
+    tier: backend
+  ports:
+  - name: backend
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
