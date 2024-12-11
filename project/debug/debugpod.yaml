@@ -1,0 +1,8 @@
+apiVersion: v1 
+kind: Pod
+metadata: 
+  name: debug
+spec:
+  containers:
+  - name: debug  #docker run -d --name nginx nginx
+    image: sunil0428/debug:v1
