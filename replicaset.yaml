@@ -30,6 +30,7 @@ kind: Service
 metadata:
   name: nginx-service
 spec:
+  type: NodePort
   selector:
     project: expense
     env: dev
