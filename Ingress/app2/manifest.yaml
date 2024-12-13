@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app2
+  labels:
+    project: expense
+    env: dev
+    tier: frontend
+spec:
+  # modify replicas according to your case
+  replicas: 1
+  selector:
+    matchLabels:
+      project: expense
+      env: dev
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        project: expense
+        env: dev
+        tier: frontend
+    spec:
+      containers:
+      - name: app2
+        image: sunil0428/app1:v1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app2
+spec:
+  selector:
+    project: expense
+    env: dev
+    tier: frontend
+  ports:
+  - name: name-of-service-port
+    protocol: TCP
+    port: 80
+    targetPort: 80
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: app2
+    annotations:
+      #kubernetes.io/ingress.class: alb
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:423623871433:certificate/0f05f37f-8e2e-4b3a-a064-6e2946833c7f
+      alb.ingress.kubernetes.io/listen-ports: '[ {"HTTPS": 443}]'
+      alb.ingress.kubernetes.io/tags: Environment=dev,Team=test
+      alb.ingress.kubernetes.io/group.name: expense
+spec:
+    ingressClassName: alb
+    rules:
+    - host: "app2.mydevops.tech"
+      http:
+        paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: app2
+              port:
+                number: 80
